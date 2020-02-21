@@ -1,6 +1,3 @@
-import * as React from 'react';
-import {Text} from 'react-native';
+import {DraggablePanel} from './DraggablePanel';
 
-export default function() {
-  return <Text>Yep I am working</Text>;
-}
+export default DraggablePanel;
