@@ -1,0 +1,62 @@
+{
+  "name": "react-native-draggable-panel",
+  "version": "1.0.0",
+  "description": "A react native draggable panel for Android and iOS",
+  "author": "Naoufal ELYOUSSOUFI <n.elyousfi@gmail.com> (https://github.com/nelyousfi)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint \"src/index.{ts,tsx}\"",
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "homepage": "https://github.com/nelyousfi/react-native-draggable-panel",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nelyousfi/react-native-draggable-panel"
+  },
+  "keywords": [
+    "react-native",
+    "react",
+    "native",
+    "swipeable",
+    "draggable",
+    "panel",
+    "android",
+    "ios",
+    "animated"
+  ],
+  "devDependencies": {
+    "@babel/core": "^7.6.2",
+    "@babel/runtime": "^7.6.2",
+    "@react-native-community/eslint-config": "^0.0.5",
+    "@types/jest": "^24.0.24",
+    "@types/react-native": "^0.60.25",
+    "@types/react-test-renderer": "16.9.1",
+    "@typescript-eslint/eslint-plugin": "^2.12.0",
+    "@typescript-eslint/parser": "^2.12.0",
+    "babel-jest": "^24.9.0",
+    "eslint": "^6.5.1",
+    "jest": "^24.9.0",
+    "metro-react-native-babel-preset": "^0.56.0",
+    "react-test-renderer": "16.9.0",
+    "typescript": "^3.7.3",
+    "pretty-quick": "^2.0.0",
+    "husky": "^3.0.9",
+    "prettier": "^1.18.2",
+    "eslint-plugin-prettier": "^3.1.1"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  }
+}
