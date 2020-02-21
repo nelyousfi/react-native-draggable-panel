@@ -9,6 +9,7 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
+import Modal from 'react-native-modal';
 
 const ANIMATION_DURATION = 300;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
@@ -39,22 +40,27 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.visible]);
 
+  React.useEffect(() => {
+    if (popupVisible) {
+      Animated.timing(animatedValue, {
+        toValue: 0.5,
+        duration: ANIMATION_DURATION,
+        useNativeDriver: true,
+      }).start(() => {
+        scrollViewRef.current!.scrollTo({
+          x: 0,
+          y: SCREEN_HEIGHT / 2,
+          animated: false,
+        });
+        setAnimating(false);
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [popupVisible]);
+
   const show = () => {
     setAnimating(true);
     togglePopup(true);
-
-    Animated.timing(animatedValue, {
-      toValue: 0.5,
-      duration: ANIMATION_DURATION,
-      useNativeDriver: true,
-    }).start(() => {
-      scrollViewRef.current!.scrollTo({
-        x: 0,
-        y: SCREEN_HEIGHT / 2,
-        animated: false,
-      });
-      setAnimating(false);
-    });
   };
 
   const hide = () => {
@@ -85,67 +91,72 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
     }
   };
 
-  if (!popupVisible) {
-    return null;
-  }
-
   return (
-    <View style={styles.popupContainer}>
-      <Animated.View
-        style={{
-          ...styles.popupOverlay,
-          opacity: animatedValue.interpolate({
-            inputRange: [0, 0.5],
-            outputRange: [0, 0.8],
-            extrapolate: 'clamp',
-          }),
-        }}
-      />
-      <ScrollView
-        ref={scrollViewRef}
-        style={styles.scroll}
-        scrollEventThrottle={16}
-        contentContainerStyle={styles.scrollContainer}
-        onScroll={onScroll}
-        bounces={false}
-        showsVerticalScrollIndicator={false}
-        decelerationRate={0}
-        snapToInterval={SCREEN_HEIGHT / 2}>
-        <TouchableWithoutFeedback style={styles.hideContainer} onPress={hide}>
-          <View style={styles.hideContainer} />
-        </TouchableWithoutFeedback>
-      </ScrollView>
-      <Animated.View
-        style={[
-          styles.popupContentContainer,
-          {
-            transform: [
-              {
-                translateY: animatedValue.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [0, -PANEL_HEIGHT],
-                }),
-              },
-            ],
-          },
-        ]}>
-        <View style={styles.indicator} />
-        <View style={{height}}>
-          <ScrollView
-            contentContainerStyle={styles.content}
-            showsVerticalScrollIndicator={false}>
-            {props.children}
-          </ScrollView>
-        </View>
-      </Animated.View>
-    </View>
+    <Modal
+      isVisible={popupVisible}
+      backdropOpacity={0}
+      animationInTiming={1}
+      animationIn={'fadeIn'}
+      style={styles.modal}>
+      <View style={styles.popupContainer}>
+        <Animated.View
+          style={{
+            ...styles.popupOverlay,
+            opacity: animatedValue.interpolate({
+              inputRange: [0, 0.5],
+              outputRange: [0, 0.8],
+              extrapolate: 'clamp',
+            }),
+          }}
+        />
+        <ScrollView
+          ref={scrollViewRef}
+          style={styles.scroll}
+          scrollEventThrottle={16}
+          contentContainerStyle={styles.scrollContainer}
+          onScroll={onScroll}
+          bounces={false}
+          showsVerticalScrollIndicator={false}
+          decelerationRate={0}
+          snapToInterval={SCREEN_HEIGHT / 2}>
+          <TouchableWithoutFeedback style={styles.hideContainer} onPress={hide}>
+            <View style={styles.hideContainer} />
+          </TouchableWithoutFeedback>
+        </ScrollView>
+        <Animated.View
+          style={[
+            styles.popupContentContainer,
+            {
+              transform: [
+                {
+                  translateY: animatedValue.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [0, -PANEL_HEIGHT],
+                  }),
+                },
+              ],
+            },
+          ]}>
+          <View style={styles.indicator} />
+          <View style={{height}}>
+            <ScrollView
+              contentContainerStyle={styles.content}
+              showsVerticalScrollIndicator={false}>
+              {props.children}
+            </ScrollView>
+          </View>
+        </Animated.View>
+      </View>
+    </Modal>
   );
 });
 
 const styles = StyleSheet.create({
+  modal: {
+    margin: 0,
+  },
   popupContainer: {
     ...StyleSheet.absoluteFillObject,
-    zIndex: 1000,
     backgroundColor: 'transparent',
   },
   popupOverlay: {
