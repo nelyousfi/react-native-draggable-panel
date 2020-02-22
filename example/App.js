@@ -18,8 +18,14 @@ export default function() {
           }}
           title="Open Panel"
         />
-        <DraggablePanel ref={ref}>
+        <DraggablePanel ref={ref} scrollableContent={false}>
           <Text>Another content</Text>
+          <Button
+            title={'HIDE'}
+            onPress={() => {
+              ref.current.hide();
+            }}
+          />
         </DraggablePanel>
       </View>
     </SafeAreaView>

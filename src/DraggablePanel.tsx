@@ -11,24 +11,33 @@ import {
 } from 'react-native';
 import Modal from 'react-native-modal';
 
-const ANIMATION_DURATION = 300;
 const SCREEN_HEIGHT = Dimensions.get('window').height;
-const PANEL_HEIGHT = SCREEN_HEIGHT - 100;
+const DEFAULT_PANEL_HEIGHT = SCREEN_HEIGHT - 100;
 
 type Props = {
   children: React.ReactNode;
-  visible?: boolean;
+  visible: boolean;
+  animationDuration: number;
+  expandable: boolean;
+  hideOnPressOutside: boolean;
+  overlayBackgroundColor: string;
+  overlayOpacity: number;
+  borderRadius: number;
+  scrollableContent: boolean;
+  onDismiss?: () => void;
 };
 
 export const DraggablePanel = React.forwardRef((props: Props, ref) => {
   const [animatedValue] = React.useState(new Animated.Value(0));
   const [popupVisible, togglePopup] = React.useState(false);
   const [animating, setAnimating] = React.useState(false);
-  const [height, setHeight] = React.useState(PANEL_HEIGHT);
+  const [height, setHeight] = React.useState(DEFAULT_PANEL_HEIGHT);
   const scrollViewRef = React.useRef<any>();
 
   animatedValue.addListener(({value}) => {
-    value === 0.5 ? setHeight(PANEL_HEIGHT / 2) : setHeight(PANEL_HEIGHT);
+    value === 0.5
+      ? setHeight(DEFAULT_PANEL_HEIGHT / 2)
+      : setHeight(DEFAULT_PANEL_HEIGHT);
   });
 
   React.useEffect(() => {
@@ -44,7 +53,7 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
     if (popupVisible) {
       Animated.timing(animatedValue, {
         toValue: 0.5,
-        duration: ANIMATION_DURATION,
+        duration: props.animationDuration,
         useNativeDriver: true,
       }).start(() => {
         scrollViewRef.current!.scrollTo({
@@ -68,25 +77,31 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
       setAnimating(true);
       Animated.timing(animatedValue, {
         toValue: 0,
-        duration: ANIMATION_DURATION,
+        duration: props.animationDuration,
         useNativeDriver: true,
       }).start(() => {
         togglePopup(false);
         setAnimating(false);
+        props.onDismiss && props.onDismiss();
       });
     }
   };
 
   React.useImperativeHandle(ref, () => ({
     show,
+    hide,
   }));
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!animating) {
       const y = event.nativeEvent.contentOffset.y;
+      if (!props.expandable && y < SCREEN_HEIGHT / 2) {
+        return;
+      }
       animatedValue.setValue(1 - y / SCREEN_HEIGHT);
       if (y === SCREEN_HEIGHT) {
         togglePopup(false);
+        props.onDismiss && props.onDismiss();
       }
     }
   };
@@ -102,9 +117,10 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
         <Animated.View
           style={{
             ...styles.popupOverlay,
+            backgroundColor: props.overlayBackgroundColor,
             opacity: animatedValue.interpolate({
               inputRange: [0, 0.5],
-              outputRange: [0, 0.8],
+              outputRange: [0, props.overlayOpacity],
               extrapolate: 'clamp',
             }),
           }}
@@ -119,7 +135,10 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
           showsVerticalScrollIndicator={false}
           decelerationRate={0}
           snapToInterval={SCREEN_HEIGHT / 2}>
-          <TouchableWithoutFeedback style={styles.hideContainer} onPress={hide}>
+          <TouchableWithoutFeedback
+            style={styles.hideContainer}
+            disabled={!props.hideOnPressOutside}
+            onPress={hide}>
             <View style={styles.hideContainer} />
           </TouchableWithoutFeedback>
         </ScrollView>
@@ -127,29 +146,45 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
           style={[
             styles.popupContentContainer,
             {
+              borderRadius: props.borderRadius,
               transform: [
                 {
                   translateY: animatedValue.interpolate({
                     inputRange: [0, 1],
-                    outputRange: [0, -PANEL_HEIGHT],
+                    outputRange: [0, -DEFAULT_PANEL_HEIGHT],
                   }),
                 },
               ],
             },
           ]}>
           <View style={styles.indicator} />
-          <View style={{height}}>
-            <ScrollView
-              contentContainerStyle={styles.content}
-              showsVerticalScrollIndicator={false}>
-              {props.children}
-            </ScrollView>
+          <View style={[{height}, styles.contentContainer]}>
+            {props.scrollableContent ? (
+              <ScrollView
+                contentContainerStyle={styles.content}
+                showsVerticalScrollIndicator={false}>
+                {props.children}
+              </ScrollView>
+            ) : (
+              <View style={styles.content}>{props.children}</View>
+            )}
           </View>
         </Animated.View>
       </View>
     </Modal>
   );
 });
+
+DraggablePanel.defaultProps = {
+  visible: false,
+  animationDuration: 300,
+  expandable: true,
+  hideOnPressOutside: true,
+  overlayBackgroundColor: 'black',
+  overlayOpacity: 0.8,
+  borderRadius: 32,
+  scrollableContent: true,
+};
 
 const styles = StyleSheet.create({
   modal: {
@@ -161,17 +196,14 @@ const styles = StyleSheet.create({
   },
   popupOverlay: {
     ...StyleSheet.absoluteFillObject,
-    backgroundColor: 'black',
   },
   popupContentContainer: {
     position: 'absolute',
     left: 0,
     right: 0,
     backgroundColor: 'white',
-    bottom: -PANEL_HEIGHT,
-    height: PANEL_HEIGHT,
-    borderTopLeftRadius: 32,
-    borderTopRightRadius: 32,
+    bottom: -DEFAULT_PANEL_HEIGHT,
+    height: DEFAULT_PANEL_HEIGHT,
     alignItems: 'center',
   },
   indicator: {
@@ -189,7 +221,13 @@ const styles = StyleSheet.create({
   scrollContainer: {
     height: SCREEN_HEIGHT * 2,
   },
+  contentContainer: {
+    flex: 1,
+    width: '100%',
+  },
   content: {
+    flex: 1,
+    width: '100%',
     paddingVertical: 16,
     paddingHorizontal: 28,
   },
