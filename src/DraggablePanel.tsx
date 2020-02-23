@@ -23,7 +23,7 @@ type Props = {
   overlayBackgroundColor: string;
   overlayOpacity: number;
   borderRadius: number;
-  scrollableContent: boolean;
+  height: number;
   onDismiss?: () => void;
 };
 
@@ -31,14 +31,8 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
   const [animatedValue] = React.useState(new Animated.Value(0));
   const [popupVisible, togglePopup] = React.useState(false);
   const [animating, setAnimating] = React.useState(false);
-  const [height, setHeight] = React.useState(DEFAULT_PANEL_HEIGHT);
+  const [height] = React.useState(Math.min(props.height, DEFAULT_PANEL_HEIGHT));
   const scrollViewRef = React.useRef<any>();
-
-  animatedValue.addListener(({value}) => {
-    value === 0.5
-      ? setHeight(DEFAULT_PANEL_HEIGHT / 2)
-      : setHeight(DEFAULT_PANEL_HEIGHT);
-  });
 
   React.useEffect(() => {
     if (props.visible && !popupVisible) {
@@ -52,13 +46,13 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
   React.useEffect(() => {
     if (popupVisible) {
       Animated.timing(animatedValue, {
-        toValue: 0.5,
+        toValue: height / DEFAULT_PANEL_HEIGHT,
         duration: props.animationDuration,
         useNativeDriver: true,
       }).start(() => {
         scrollViewRef.current!.scrollTo({
           x: 0,
-          y: SCREEN_HEIGHT / 2,
+          y: SCREEN_HEIGHT - (SCREEN_HEIGHT * height) / DEFAULT_PANEL_HEIGHT,
           animated: false,
         });
         setAnimating(false);
@@ -80,6 +74,11 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
         duration: props.animationDuration,
         useNativeDriver: true,
       }).start(() => {
+        scrollViewRef.current!.scrollTo({
+          x: 0,
+          y: SCREEN_HEIGHT,
+          animated: false,
+        });
         togglePopup(false);
         setAnimating(false);
         props.onDismiss && props.onDismiss();
@@ -95,7 +94,10 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!animating) {
       const y = event.nativeEvent.contentOffset.y;
-      if (!props.expandable && y < SCREEN_HEIGHT / 2) {
+      if (
+        !props.expandable &&
+        y < SCREEN_HEIGHT - (SCREEN_HEIGHT * height) / DEFAULT_PANEL_HEIGHT
+      ) {
         return;
       }
       animatedValue.setValue(1 - y / SCREEN_HEIGHT);
@@ -119,7 +121,7 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
             ...styles.popupOverlay,
             backgroundColor: props.overlayBackgroundColor,
             opacity: animatedValue.interpolate({
-              inputRange: [0, 0.5],
+              inputRange: [0, height / DEFAULT_PANEL_HEIGHT],
               outputRange: [0, props.overlayOpacity],
               extrapolate: 'clamp',
             }),
@@ -134,7 +136,11 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
           bounces={false}
           showsVerticalScrollIndicator={false}
           decelerationRate={0}
-          snapToInterval={SCREEN_HEIGHT / 2}>
+          snapToOffsets={[
+            0,
+            SCREEN_HEIGHT - (SCREEN_HEIGHT * height) / DEFAULT_PANEL_HEIGHT,
+            SCREEN_HEIGHT,
+          ]}>
           <TouchableWithoutFeedback
             style={styles.hideContainer}
             disabled={!props.hideOnPressOutside}
@@ -146,7 +152,8 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
           style={[
             styles.popupContentContainer,
             {
-              borderRadius: props.borderRadius,
+              borderTopLeftRadius: props.borderRadius,
+              borderTopRightRadius: props.borderRadius,
               transform: [
                 {
                   translateY: animatedValue.interpolate({
@@ -158,17 +165,9 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
             },
           ]}>
           <View style={styles.indicator} />
-          <View style={[{height}, styles.contentContainer]}>
-            {props.scrollableContent ? (
-              <ScrollView
-                contentContainerStyle={styles.content}
-                showsVerticalScrollIndicator={false}>
-                {props.children}
-              </ScrollView>
-            ) : (
-              <View style={styles.content}>{props.children}</View>
-            )}
-          </View>
+          <Animated.View style={[styles.content, {height}]}>
+            {props.children}
+          </Animated.View>
         </Animated.View>
       </View>
     </Modal>
@@ -183,7 +182,7 @@ DraggablePanel.defaultProps = {
   overlayBackgroundColor: 'black',
   overlayOpacity: 0.8,
   borderRadius: 32,
-  scrollableContent: true,
+  height: DEFAULT_PANEL_HEIGHT / 2,
 };
 
 const styles = StyleSheet.create({
@@ -221,17 +220,10 @@ const styles = StyleSheet.create({
   scrollContainer: {
     height: SCREEN_HEIGHT * 2,
   },
-  contentContainer: {
-    flex: 1,
-    width: '100%',
-  },
-  content: {
-    flex: 1,
-    width: '100%',
-    paddingVertical: 16,
-    paddingHorizontal: 28,
-  },
   hideContainer: {
     flex: 1,
+  },
+  content: {
+    width: '100%',
   },
 });
