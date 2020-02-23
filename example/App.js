@@ -39,7 +39,7 @@ export default function() {
           ref={ref}
           expandable={true}
           borderRadius={0}
-          height={300}>
+          height={100}>
           <View style={styles.icon} />
           <Text style={styles.title}>Lorem Ipsum</Text>
           <View style={styles.items}>

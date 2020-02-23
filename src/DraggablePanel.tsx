@@ -165,9 +165,9 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
             },
           ]}>
           <View style={styles.indicator} />
-          <Animated.View style={[styles.content, {height}]}>
+          <View style={[styles.content, {height: DEFAULT_PANEL_HEIGHT}]}>
             {props.children}
-          </Animated.View>
+          </View>
         </Animated.View>
       </View>
     </Modal>
