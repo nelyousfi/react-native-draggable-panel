@@ -101,7 +101,7 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
         return;
       }
       animatedValue.setValue(1 - y / SCREEN_HEIGHT);
-      if (y === SCREEN_HEIGHT) {
+      if (Math.floor(y) === Math.floor(SCREEN_HEIGHT)) {
         togglePopup(false);
         props.onDismiss && props.onDismiss();
       }
@@ -165,7 +165,11 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
             },
           ]}>
           <View style={styles.indicator} />
-          <View style={[styles.content, {height: DEFAULT_PANEL_HEIGHT}]}>
+          <View
+            style={[
+              styles.content,
+              {height: props.expandable ? DEFAULT_PANEL_HEIGHT : props.height},
+            ]}>
             {props.children}
           </View>
         </Animated.View>
@@ -176,7 +180,7 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
 
 DraggablePanel.defaultProps = {
   visible: false,
-  animationDuration: 300,
+  animationDuration: 500,
   expandable: true,
   hideOnPressOutside: true,
   overlayBackgroundColor: 'black',
