@@ -37,19 +37,6 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
   );
   const scrollViewRef = React.useRef<any>();
 
-  animatedValue.addListener(({value}) => {
-    if (props.expandable) {
-      if (
-        value > height / DEFAULT_PANEL_HEIGHT &&
-        height2 !== DEFAULT_PANEL_HEIGHT
-      ) {
-        setHeight2(DEFAULT_PANEL_HEIGHT);
-      } else if (value === height / DEFAULT_PANEL_HEIGHT) {
-        setHeight2(height);
-      }
-    }
-  });
-
   React.useEffect(() => {
     if (props.visible && !popupVisible) {
       show();
@@ -124,6 +111,18 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
     }
   };
 
+  const onScrollBeginDrag = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (e.nativeEvent.contentOffset.y !== 0) {
+      setHeight2(DEFAULT_PANEL_HEIGHT);
+    }
+  };
+
+  const onMomentumScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+    if (e.nativeEvent.contentOffset.y !== 0) {
+      setHeight2(height);
+    }
+  };
+
   return (
     <Modal
       isVisible={popupVisible}
@@ -144,7 +143,6 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
           }}
         />
         <ScrollView
-          nestedScrollEnabled={false}
           ref={scrollViewRef}
           style={styles.scroll}
           scrollEventThrottle={16}
@@ -152,6 +150,8 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
           onScroll={onScroll}
           bounces={false}
           showsVerticalScrollIndicator={false}
+          onScrollBeginDrag={onScrollBeginDrag}
+          onMomentumScrollEnd={onMomentumScrollEnd}
           decelerationRate={0}
           snapToOffsets={[
             0,
