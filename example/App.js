@@ -6,6 +6,7 @@ import {
   Button,
   SafeAreaView,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 import DraggablePanel from 'react-native-draggable-panel';
 
@@ -90,7 +91,9 @@ export default function() {
         <DraggablePanel ref={ref2} expandable={true} borderRadius={32}>
           <ScrollView showsVerticalScrollIndicator={false}>
             {Array.from(Array(100)).map((_, i) => (
-              <Text key={`text_${i}`}>Text {i}</Text>
+              <TouchableOpacity key={`text_${i}`}>
+                <Text>Text {i}</Text>
+              </TouchableOpacity>
             ))}
           </ScrollView>
         </DraggablePanel>

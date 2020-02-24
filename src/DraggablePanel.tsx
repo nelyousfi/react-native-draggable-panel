@@ -32,7 +32,23 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
   const [popupVisible, togglePopup] = React.useState(false);
   const [animating, setAnimating] = React.useState(false);
   const [height] = React.useState(Math.min(props.height, DEFAULT_PANEL_HEIGHT));
+  const [height2, setHeight2] = React.useState(
+    Math.min(props.height, DEFAULT_PANEL_HEIGHT),
+  );
   const scrollViewRef = React.useRef<any>();
+
+  animatedValue.addListener(({value}) => {
+    if (props.expandable) {
+      if (
+        value > height / DEFAULT_PANEL_HEIGHT &&
+        height2 !== DEFAULT_PANEL_HEIGHT
+      ) {
+        setHeight2(DEFAULT_PANEL_HEIGHT);
+      } else if (value === height / DEFAULT_PANEL_HEIGHT) {
+        setHeight2(height);
+      }
+    }
+  });
 
   React.useEffect(() => {
     if (props.visible && !popupVisible) {
@@ -128,6 +144,7 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
           }}
         />
         <ScrollView
+          nestedScrollEnabled={false}
           ref={scrollViewRef}
           style={styles.scroll}
           scrollEventThrottle={16}
@@ -165,9 +182,13 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
             },
           ]}>
           <View style={styles.indicator} />
-          <View style={[styles.content, {height: DEFAULT_PANEL_HEIGHT}]}>
+          <Animated.View
+            style={[
+              styles.content,
+              {height: props.expandable ? height2 : height},
+            ]}>
             {props.children}
-          </View>
+          </Animated.View>
         </Animated.View>
       </View>
     </Modal>
