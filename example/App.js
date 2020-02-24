@@ -39,56 +39,71 @@ export default function() {
         <DraggablePanel
           ref={ref}
           expandable={true}
+          hideOnPressOutside={true}
+          overlayOpacity={1}
           borderRadius={0}
-          height={100}>
-          <View style={styles.icon} />
-          <Text style={styles.title}>Lorem Ipsum</Text>
-          <View style={styles.items}>
-            <View>
-              <Text style={styles.title2}>What is Lorem Ipsum?</Text>
-              <Text style={styles.subtitle}>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry.
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.title2}>Why do we use it?</Text>
-              <Text style={styles.subtitle}>
-                It is a long established fact that a reader will be distracted
-                by the readable content of a page when looking at its layout.
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.title2}>Where does it come from?</Text>
-              <Text style={styles.subtitle}>
-                Contrary to popular belief, Lorem Ipsum is not simply random
-                text.
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.title2}>What is Lorem Ipsum?</Text>
-              <Text style={styles.subtitle}>
-                Lorem Ipsum is simply dummy text of the printing and typesetting
-                industry.
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.title2}>Why do we use it?</Text>
-              <Text style={styles.subtitle}>
-                It is a long established fact that a reader will be distracted
-                by the readable content of a page when looking at its layout.
-              </Text>
-            </View>
-            <View>
-              <Text style={styles.title2}>Where does it come from?</Text>
-              <Text style={styles.subtitle}>
-                Contrary to popular belief, Lorem Ipsum is not simply random
-                text.
-              </Text>
+          height={300}>
+          <View style={styles.contentContainer}>
+            <Button
+              title={'HIDE'}
+              onPress={() => {
+                ref.current.hide();
+              }}
+            />
+            <View style={styles.icon} />
+            <Text style={styles.title}>Lorem Ipsum</Text>
+            <View style={styles.items}>
+              <View>
+                <Text style={styles.title2}>What is Lorem Ipsum?</Text>
+                <Text style={styles.subtitle}>
+                  Lorem Ipsum is simply dummy text of the printing and
+                  typesetting industry.
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.title2}>Why do we use it?</Text>
+                <Text style={styles.subtitle}>
+                  It is a long established fact that a reader will be distracted
+                  by the readable content of a page when looking at its layout.
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.title2}>Where does it come from?</Text>
+                <Text style={styles.subtitle}>
+                  Contrary to popular belief, Lorem Ipsum is not simply random
+                  text.
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.title2}>What is Lorem Ipsum?</Text>
+                <Text style={styles.subtitle}>
+                  Lorem Ipsum is simply dummy text of the printing and
+                  typesetting industry.
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.title2}>Why do we use it?</Text>
+                <Text style={styles.subtitle}>
+                  It is a long established fact that a reader will be distracted
+                  by the readable content of a page when looking at its layout.
+                </Text>
+              </View>
+              <View>
+                <Text style={styles.title2}>Where does it come from?</Text>
+                <Text style={styles.subtitle}>
+                  Contrary to popular belief, Lorem Ipsum is not simply random
+                  text.
+                </Text>
+              </View>
             </View>
           </View>
         </DraggablePanel>
-        <DraggablePanel ref={ref2} expandable={true} borderRadius={32}>
+        <DraggablePanel
+          ref={ref2}
+          expandable={true}
+          height={400}
+          animationDuration={2000}
+          borderRadius={0}>
           <ScrollView showsVerticalScrollIndicator={false}>
             {Array.from(Array(100)).map((_, i) => (
               <TouchableOpacity key={`text_${i}`}>
@@ -120,6 +135,11 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  contentContainer: {
+    flex: 1,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+  },
   content: {
     flex: 1,
     alignItems: 'center',
@@ -146,7 +166,7 @@ const styles = StyleSheet.create({
   },
   items: {
     flex: 1,
-    // justifyContent: 'space-between',
+    justifyContent: 'space-between',
     marginVertical: 20,
   },
 });
