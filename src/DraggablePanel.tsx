@@ -29,25 +29,30 @@ type Props = {
 
 export const DraggablePanel = React.forwardRef((props: Props, ref) => {
   const [animatedValue] = React.useState(new Animated.Value(0));
-  const [popupVisible, togglePopup] = React.useState(false);
+  const [popupVisible, togglePopupVisibility] = React.useState(false);
   const [animating, setAnimating] = React.useState(false);
   const [height] = React.useState(Math.min(props.height, DEFAULT_PANEL_HEIGHT));
-  const [height2, setHeight2] = React.useState(
+  const [innerContentHeight, setInnerContentHeight] = React.useState(
     Math.min(props.height, DEFAULT_PANEL_HEIGHT),
   );
   const scrollViewRef = React.useRef<any>();
 
   React.useEffect(() => {
-    if (props.visible && !popupVisible) {
-      show();
-    } else if (popupVisible) {
-      hide();
+    if (!animating) {
+      if (props.visible && !popupVisible) {
+        show();
+      } else if (popupVisible) {
+        hide();
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.visible]);
 
-  React.useEffect(() => {
-    if (popupVisible) {
+  const show = () => {
+    if (!animating) {
+      animatedValue.setValue(0);
+      setAnimating(true);
+      togglePopupVisibility(true);
       Animated.timing(animatedValue, {
         toValue: height / DEFAULT_PANEL_HEIGHT,
         duration: props.animationDuration,
@@ -61,12 +66,6 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
         setAnimating(false);
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [popupVisible]);
-
-  const show = () => {
-    setAnimating(true);
-    togglePopup(true);
   };
 
   const hide = () => {
@@ -82,7 +81,7 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
           y: SCREEN_HEIGHT,
           animated: false,
         });
-        togglePopup(false);
+        togglePopupVisibility(false);
         setAnimating(false);
         props.onDismiss && props.onDismiss();
       });
@@ -103,23 +102,24 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
       ) {
         return;
       }
-      animatedValue.setValue(1 - y / SCREEN_HEIGHT);
+      animatedValue.setValue(1 - Math.floor(y) / Math.floor(SCREEN_HEIGHT));
       if (Math.floor(y) === Math.floor(SCREEN_HEIGHT)) {
-        togglePopup(false);
+        togglePopupVisibility(false);
+        setAnimating(false);
         props.onDismiss && props.onDismiss();
       }
     }
   };
 
   const onScrollBeginDrag = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (e.nativeEvent.contentOffset.y !== 0) {
-      setHeight2(DEFAULT_PANEL_HEIGHT);
+    if (e.nativeEvent.contentOffset.y !== 0 && props.expandable) {
+      setInnerContentHeight(DEFAULT_PANEL_HEIGHT);
     }
   };
 
   const onMomentumScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (e.nativeEvent.contentOffset.y !== 0) {
-      setHeight2(height);
+    if (e.nativeEvent.contentOffset.y !== 0 && props.expandable) {
+      setInnerContentHeight(height);
     }
   };
 
@@ -187,7 +187,7 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
           <View
             style={[
               styles.content,
-              {height: props.expandable ? height2 : height},
+              {height: props.expandable ? innerContentHeight : height},
             ]}>
             {props.children}
           </View>
