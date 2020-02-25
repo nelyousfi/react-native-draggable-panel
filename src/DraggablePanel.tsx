@@ -128,7 +128,9 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
       isVisible={popupVisible}
       backdropOpacity={0}
       animationInTiming={1}
+      animationOutTiming={1}
       animationIn={'fadeIn'}
+      animationOut={'fadeOut'}
       style={styles.modal}>
       <View style={styles.popupContainer}>
         <Animated.View
@@ -160,7 +162,7 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
           ]}>
           <TouchableWithoutFeedback
             style={styles.hideContainer}
-            disabled={!props.hideOnPressOutside}
+            disabled={!props.hideOnPressOutside || animating}
             onPress={hide}>
             <View style={styles.hideContainer} />
           </TouchableWithoutFeedback>
