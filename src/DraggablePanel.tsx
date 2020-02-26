@@ -51,6 +51,7 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
   const show = () => {
     if (!animating) {
       animatedValue.setValue(0);
+      setInnerContentHeight(Math.min(props.height, DEFAULT_PANEL_HEIGHT));
       setAnimating(true);
       togglePopupVisibility(true);
       Animated.timing(animatedValue, {
