@@ -206,11 +206,11 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
 DraggablePanel.defaultProps = {
   visible: false,
   animationDuration: 500,
-  expandable: true,
+  expandable: false,
   hideOnPressOutside: true,
   overlayBackgroundColor: 'black',
   overlayOpacity: 0.8,
-  borderRadius: 32,
+  borderRadius: 0,
   height: DEFAULT_PANEL_HEIGHT / 2,
 };
 
