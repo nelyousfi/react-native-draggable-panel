@@ -119,8 +119,13 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
   };
 
   const onMomentumScrollEnd = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    if (e.nativeEvent.contentOffset.y !== 0 && props.expandable) {
-      setInnerContentHeight(height);
+    if (props.expandable) {
+      const {y} = e.nativeEvent.contentOffset;
+      if (y !== 0) {
+        setInnerContentHeight(height);
+      } else {
+        setInnerContentHeight(DEFAULT_PANEL_HEIGHT);
+      }
     }
   };
 
