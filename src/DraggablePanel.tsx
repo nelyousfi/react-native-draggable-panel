@@ -96,7 +96,7 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (!animating) {
-      const y = event.nativeEvent.contentOffset.y;
+      const {y} = event.nativeEvent.contentOffset;
       if (
         !props.expandable &&
         y < SCREEN_HEIGHT - (SCREEN_HEIGHT * height) / DEFAULT_PANEL_HEIGHT
@@ -104,7 +104,9 @@ export const DraggablePanel = React.forwardRef((props: Props, ref) => {
         return;
       }
       animatedValue.setValue(1 - Math.floor(y) / Math.floor(SCREEN_HEIGHT));
-      if (Math.floor(y) === Math.floor(SCREEN_HEIGHT)) {
+      // >= Fix the android issue, cause for some reason it goes for more than SCREEN_HEIGHT
+      // if the use swipes faster
+      if (Math.floor(y) >= Math.floor(SCREEN_HEIGHT)) {
         togglePopupVisibility(false);
         setAnimating(false);
         props.onDismiss && props.onDismiss();
