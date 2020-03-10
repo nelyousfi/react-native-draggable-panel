@@ -2,6 +2,8 @@
 
 A react native draggable panel for Android and iOS
 
+![](./.github/images/demo.gif)
+
 # Installation
 
 This library is available on npm, install it with: `npm i react-native-draggable-panel` or `yarn add react-native-draggable-panel`.
