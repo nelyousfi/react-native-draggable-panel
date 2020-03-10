@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   FlatList,
   SafeAreaView,
+  ScrollView,
 } from 'react-native';
 import DraggablePanel from 'react-native-draggable-panel';
 
@@ -50,6 +51,15 @@ export default function() {
               break;
             case 'overlayOpacity':
               overlayOpacityPanel.current.show();
+              break;
+            case 'borderRadius':
+              borderRadiusPanel.current.show();
+              break;
+            case 'height':
+              heightPanel.current.show();
+              break;
+            case 'scrollable':
+              scrollablePanel.current.show();
               break;
           }
         }}
@@ -128,6 +138,37 @@ export default function() {
     );
   }
 
+  function renderBorderRadiusPanel() {
+    return (
+      <DraggablePanel ref={borderRadiusPanel} borderRadius={32}>
+        <Content title={'Border Radius Panel'} />
+      </DraggablePanel>
+    );
+  }
+
+  function renderHeightPanel() {
+    return (
+      <DraggablePanel ref={heightPanel} height={600} expandable>
+        <Content title={'Height Panel'} />
+      </DraggablePanel>
+    );
+  }
+
+  function renderScrollablePanel() {
+    return (
+      <DraggablePanel ref={scrollablePanel} expandable>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <Content title={'Scrollable Panel'} />
+          <Content title={'Scrollable Panel'} />
+          <Content title={'Scrollable Panel'} />
+          <Content title={'Scrollable Panel'} />
+          <Content title={'Scrollable Panel'} />
+          <Content title={'Scrollable Panel'} />
+        </ScrollView>
+      </DraggablePanel>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList style={styles.list} data={data} renderItem={renderItem} />
@@ -138,6 +179,9 @@ export default function() {
       {renderHideOnPressOutsidePanel()}
       {renderOverlayBackgroundColorPanel()}
       {renderOverlayOpacityPanel()}
+      {renderBorderRadiusPanel()}
+      {renderHeightPanel()}
+      {renderScrollablePanel()}
     </SafeAreaView>
   );
 }
