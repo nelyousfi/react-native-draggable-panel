@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {ReactNode} from 'react';
 import {
   Animated,
   Dimensions,
@@ -8,7 +9,6 @@ import {
   TouchableWithoutFeedback,
   View,
 } from 'react-native';
-import {ReactNode} from 'react';
 
 const SCREEN_HEIGHT: number = Dimensions.get('window').height;
 const DEFAULT_PANEL_HEIGHT = SCREEN_HEIGHT - 100;
@@ -64,7 +64,7 @@ export const DraggablePanel = React.forwardRef<Props, any>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [visible]);
 
-    const show = () => {
+    const show = React.useCallback(() => {
       if (!animating) {
         animatedValue.setValue(0);
         setInnerContentHeight(Math.min(initialHeight, DEFAULT_PANEL_HEIGHT));
@@ -83,7 +83,7 @@ export const DraggablePanel = React.forwardRef<Props, any>(
           setAnimating(false);
         });
       }
-    };
+    }, [animatedValue, animating, animationDuration, height, initialHeight]);
 
     const hide = React.useCallback(() => {
       if (!animating) {
