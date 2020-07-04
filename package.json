@@ -1,6 +1,6 @@
 {
   "name": "react-native-draggable-panel",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "A react native draggable panel for Android and iOS",
   "author": "Naoufal ELYOUSSOUFI <n.elyousfi@gmail.com> (https://github.com/nelyousfi)",
   "main": "dist/index.js",
@@ -59,7 +59,5 @@
       "pre-commit": "pretty-quick --staged"
     }
   },
-  "dependencies": {
-    "react-native-modal": "^11.5.4"
-  }
+  "dependencies": {}
 }
