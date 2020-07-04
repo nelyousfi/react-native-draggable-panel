@@ -1,9 +1,11 @@
 import * as React from 'react';
-import {ReactNode} from 'react';
+import {ReactNode, RefObject} from 'react';
 import {
   Animated,
   Dimensions,
   Modal,
+  NativeScrollEvent,
+  NativeSyntheticEvent,
   ScrollView,
   StyleSheet,
   TouchableWithoutFeedback,
@@ -13,20 +15,28 @@ import {
 const SCREEN_HEIGHT: number = Dimensions.get('window').height;
 const DEFAULT_PANEL_HEIGHT = SCREEN_HEIGHT - 100;
 
+export type ReactNativeDraggablePanelRef = {
+  show: () => void;
+  hide: () => void;
+};
+
 type Props = {
   children: ReactNode;
   visible?: boolean;
-  animationDuration: number;
-  expandable: boolean;
+  animationDuration?: number;
+  expandable?: boolean;
   hideOnPressOutside?: boolean;
   overlayBackgroundColor?: string;
-  overlayOpacity: number;
-  borderRadius: number;
-  initialHeight: number;
+  overlayOpacity?: number;
+  borderRadius?: number;
+  initialHeight?: number;
   onDismiss?: () => void;
 };
 
-export const DraggablePanel = React.forwardRef<Props, any>(
+export const DraggablePanel = React.forwardRef<
+  ReactNativeDraggablePanelRef,
+  Props
+>(
   (
     {
       visible = false,
@@ -40,7 +50,7 @@ export const DraggablePanel = React.forwardRef<Props, any>(
       onDismiss,
       children,
     }: Props,
-    ref: any,
+    ref: React.Ref<ReactNativeDraggablePanelRef>,
   ) => {
     const [animatedValue] = React.useState(new Animated.Value(0));
     const [popupVisible, togglePopupVisibility] = React.useState(false);
@@ -51,7 +61,7 @@ export const DraggablePanel = React.forwardRef<Props, any>(
     const [innerContentHeight, setInnerContentHeight] = React.useState(
       Math.min(initialHeight, DEFAULT_PANEL_HEIGHT),
     );
-    const scrollViewRef = React.useRef<any>();
+    const scrollViewRef: RefObject<ScrollView> = React.useRef(null);
 
     React.useEffect(() => {
       if (!animating) {
@@ -105,13 +115,16 @@ export const DraggablePanel = React.forwardRef<Props, any>(
       }
     }, [animatedValue, animating, animationDuration, onDismiss]);
 
-    React.useImperativeHandle(ref, () => ({
+    React.useImperativeHandle<
+      ReactNativeDraggablePanelRef,
+      ReactNativeDraggablePanelRef
+    >(ref, () => ({
       show,
       hide,
     }));
 
     const onScroll = React.useCallback(
-      (event: any) => {
+      (event: NativeSyntheticEvent<NativeScrollEvent>) => {
         if (!animating) {
           const {y} = event.nativeEvent.contentOffset;
           if (
@@ -134,7 +147,7 @@ export const DraggablePanel = React.forwardRef<Props, any>(
     );
 
     const onScrollBeginDrag = React.useCallback(
-      (e: any) => {
+      (e: NativeSyntheticEvent<NativeScrollEvent>) => {
         if (e.nativeEvent.contentOffset.y !== 0 && expandable) {
           setInnerContentHeight(DEFAULT_PANEL_HEIGHT);
         }
@@ -143,7 +156,7 @@ export const DraggablePanel = React.forwardRef<Props, any>(
     );
 
     const onMomentumScrollEnd = React.useCallback(
-      (e: any) => {
+      (e: NativeSyntheticEvent<NativeScrollEvent>) => {
         if (expandable) {
           const {y} = e.nativeEvent.contentOffset;
           if (y !== 0) {
