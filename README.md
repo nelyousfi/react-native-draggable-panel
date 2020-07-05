@@ -58,14 +58,15 @@ render () {
 
 # Available props
 
-| Name                   | Type     | Default           | Description                                                                |
-| ---------------------- | -------- | ----------------- | -------------------------------------------------------------------------- |
-| visible                | boolean  | false             | Controls the panel's visibility                                            |
-| animationDuration      | number   | 500               | Controls the duration in ms to show or hide the panel                      |
-| expandable             | boolean  | false             | Controls if the panel can be expanded or not                               |
-| hideOnPressOutside     | boolean  | true              | Controls neither to hide the panel when user presses on the overlay or not |
-| overlayBackgroundColor | Color    | black             | Controls the backgroundColor of the overlay                                |
-| overlayOpacity         | number   | 0.8               | Is a value between 0 and 1 that controls the overlay opacity               |
-| borderRadius           | number   | 0                 | Controls the panel top border radius                                       |
-| height                 | number   | SCREEN_HEIGHT / 2 | Controls the panel initial height                                          |
-| onDismiss              | callback |                   | A callback function when the panel is dismissed                            |
+| Name                    | Type     | Default           | Description                                                                                      |
+| ----------------------- | -------- | ----------------- | ------------------------------------------------------------------------------------------------ |
+| visible                 | boolean  | false             | Controls the panel's visibility                                                                  |
+| animationDuration       | number   | 500               | Controls the duration in ms to show or hide the panel                                            |
+| expandable              | boolean  | false             | Controls if the panel can be expanded or not                                                     |
+| hideOnPressOutside      | boolean  | true              | Controls neither to hide the panel when user presses on the overlay or not                       |
+| overlayBackgroundColor  | Color    | black             | Controls the backgroundColor of the overlay                                                      |
+| overlayOpacity          | number   | 0.8               | Is a value between 0 and 1 that controls the overlay opacity                                     |
+| borderRadius            | number   | 0                 | Controls the panel top border radius                                                             |
+| height                  | number   | SCREEN_HEIGHT / 2 | Controls the panel initial height                                                                |
+| hideOnBackButtonPressed | boolean  | true              | Controls either the panel get dismissed on android physical button pressed or not [Android ONLY] |
+| onDismiss               | callback |                   | A callback function when the panel is dismissed                                                  |
