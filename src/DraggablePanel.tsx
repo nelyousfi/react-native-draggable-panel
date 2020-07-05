@@ -6,6 +6,7 @@ import {
   Modal,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  Platform,
   ScrollView,
   StyleSheet,
   TouchableWithoutFeedback,
@@ -30,6 +31,7 @@ type Props = {
   overlayOpacity?: number;
   borderRadius?: number;
   initialHeight?: number;
+  hideOnBackButtonPressed?: boolean;
   onDismiss?: () => void;
 };
 
@@ -47,6 +49,7 @@ export const DraggablePanel = React.forwardRef<
       overlayOpacity = 0.8,
       borderRadius = 0,
       initialHeight = DEFAULT_PANEL_HEIGHT / 2,
+      hideOnBackButtonPressed = true,
       onDismiss,
       children,
     }: Props,
@@ -115,6 +118,17 @@ export const DraggablePanel = React.forwardRef<
       }
     }, [animatedValue, animating, animationDuration, onDismiss]);
 
+    const onBackButtonPress = React.useCallback(() => {
+      if (
+        Platform.OS === 'android' &&
+        hideOnBackButtonPressed &&
+        !animating &&
+        popupVisible
+      ) {
+        hide();
+      }
+    }, [hideOnBackButtonPressed, animating, popupVisible, hide]);
+
     React.useImperativeHandle<
       ReactNativeDraggablePanelRef,
       ReactNativeDraggablePanelRef
@@ -170,7 +184,11 @@ export const DraggablePanel = React.forwardRef<
     );
 
     return (
-      <Modal visible={popupVisible} transparent animated={false}>
+      <Modal
+        visible={popupVisible}
+        transparent
+        animated={false}
+        onRequestClose={onBackButtonPress}>
         <View style={styles.popupContainer}>
           <Animated.View
             style={{
