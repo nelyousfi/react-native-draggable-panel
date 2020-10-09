@@ -77,7 +77,7 @@ export const DraggablePanel = React.forwardRef<
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [visible]);
 
-    const show = React.useCallback(() => {
+    const show = () => {
       if (!animating) {
         animatedValue.setValue(0);
         setInnerContentHeight(Math.min(initialHeight, DEFAULT_PANEL_HEIGHT));
@@ -96,9 +96,9 @@ export const DraggablePanel = React.forwardRef<
           setAnimating(false);
         });
       }
-    }, [animatedValue, animating, animationDuration, height, initialHeight]);
+    };
 
-    const hide = React.useCallback(() => {
+    const hide = () => {
       if (!animating) {
         setAnimating(true);
         Animated.timing(animatedValue, {
@@ -116,9 +116,9 @@ export const DraggablePanel = React.forwardRef<
           onDismiss && onDismiss();
         });
       }
-    }, [animatedValue, animating, animationDuration, onDismiss]);
+    };
 
-    const onBackButtonPress = React.useCallback(() => {
+    const onBackButtonPress = () => {
       if (
         Platform.OS === 'android' &&
         hideOnBackButtonPressed &&
@@ -127,7 +127,7 @@ export const DraggablePanel = React.forwardRef<
       ) {
         hide();
       }
-    }, [hideOnBackButtonPressed, animating, popupVisible, hide]);
+    };
 
     React.useImperativeHandle<
       ReactNativeDraggablePanelRef,
@@ -137,51 +137,46 @@ export const DraggablePanel = React.forwardRef<
       hide,
     }));
 
-    const onScroll = React.useCallback(
-      (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-        if (!animating) {
-          const {y} = event.nativeEvent.contentOffset;
-          if (
-            !expandable &&
-            y < SCREEN_HEIGHT - (SCREEN_HEIGHT * height) / DEFAULT_PANEL_HEIGHT
-          ) {
-            return;
-          }
-          animatedValue.setValue(1 - Math.floor(y) / Math.floor(SCREEN_HEIGHT));
-          // >= Fix the android issue, cause for some reason it goes for more than SCREEN_HEIGHT
-          // if the use swipes faster
-          if (Math.floor(y) >= Math.floor(SCREEN_HEIGHT)) {
-            togglePopupVisibility(false);
-            setAnimating(false);
-            onDismiss && onDismiss();
-          }
+    const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      if (!animating) {
+        const {y} = event.nativeEvent.contentOffset;
+        if (
+          !expandable &&
+          y < SCREEN_HEIGHT - (SCREEN_HEIGHT * height) / DEFAULT_PANEL_HEIGHT
+        ) {
+          return;
         }
-      },
-      [animatedValue, animating, expandable, height, onDismiss],
-    );
+        animatedValue.setValue(1 - Math.floor(y) / Math.floor(SCREEN_HEIGHT));
+        // >= Fix the android issue, cause for some reason it goes for more than SCREEN_HEIGHT
+        // if the use swipes faster
+        if (Math.floor(y) >= Math.floor(SCREEN_HEIGHT)) {
+          togglePopupVisibility(false);
+          setAnimating(false);
+          onDismiss && onDismiss();
+        }
+      }
+    };
 
-    const onScrollBeginDrag = React.useCallback(
-      (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-        if (e.nativeEvent.contentOffset.y !== 0 && expandable) {
+    const onScrollBeginDrag = (
+      event: NativeSyntheticEvent<NativeScrollEvent>,
+    ) => {
+      if (event.nativeEvent.contentOffset.y !== 0 && expandable) {
+        setInnerContentHeight(DEFAULT_PANEL_HEIGHT);
+      }
+    };
+
+    const onMomentumScrollEnd = (
+      event: NativeSyntheticEvent<NativeScrollEvent>,
+    ) => {
+      if (expandable) {
+        const {y} = event.nativeEvent.contentOffset;
+        if (y !== 0) {
+          setInnerContentHeight(height);
+        } else {
           setInnerContentHeight(DEFAULT_PANEL_HEIGHT);
         }
-      },
-      [expandable],
-    );
-
-    const onMomentumScrollEnd = React.useCallback(
-      (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-        if (expandable) {
-          const {y} = e.nativeEvent.contentOffset;
-          if (y !== 0) {
-            setInnerContentHeight(height);
-          } else {
-            setInnerContentHeight(DEFAULT_PANEL_HEIGHT);
-          }
-        }
-      },
-      [height, expandable],
-    );
+      }
+    };
 
     return (
       <Modal
