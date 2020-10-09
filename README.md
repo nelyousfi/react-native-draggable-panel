@@ -67,6 +67,6 @@ render () {
 | overlayBackgroundColor  | Color    | black             | Controls the backgroundColor of the overlay                                                      |
 | overlayOpacity          | number   | 0.8               | Is a value between 0 and 1 that controls the overlay opacity                                     |
 | borderRadius            | number   | 0                 | Controls the panel top border radius                                                             |
-| height                  | number   | SCREEN_HEIGHT / 2 | Controls the panel initial height                                                                |
+| initialHeight                  | number   | SCREEN_HEIGHT / 2 | Controls the panel initial height                                                                |
 | hideOnBackButtonPressed | boolean  | true              | Controls either the panel get dismissed on android physical button pressed or not [Android ONLY] |
 | onDismiss               | callback |                   | A callback function when the panel is dismissed                                                  |
