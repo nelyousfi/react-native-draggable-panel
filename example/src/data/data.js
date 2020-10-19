@@ -20,6 +20,11 @@ export default [
     color: '#da3e79',
   },
   {
+    key: 'hideable',
+    title: 'hideable',
+    color: '#a6da3e',
+  },
+  {
     key: 'hideOnPressOutside',
     title: 'hideOnPressOutside',
     color: '#45a7da',

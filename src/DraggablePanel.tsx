@@ -214,6 +214,7 @@ export const DraggablePanel = React.forwardRef<
             showsVerticalScrollIndicator={false}
             onScrollBeginDrag={onScrollBeginDrag}
             onMomentumScrollEnd={onMomentumScrollEnd}
+            scrollEnabled={hideable}
             decelerationRate={0}
             snapToOffsets={[
               0,

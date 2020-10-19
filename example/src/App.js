@@ -18,6 +18,7 @@ export default function() {
   const refPanel = React.useRef();
   const animationPanel = React.useRef();
   const expandablePanel = React.useRef();
+  const hideablePanel = React.useRef();
   const hideOnPressOutsidePanel = React.useRef();
   const overlayBackgroundColorPanel = React.useRef();
   const overlayOpacityPanel = React.useRef();
@@ -42,6 +43,9 @@ export default function() {
               break;
             case 'expandable':
               expandablePanel.current.show();
+              break;
+            case 'hideable':
+              hideablePanel.current.show();
               break;
             case 'hideOnPressOutside':
               hideOnPressOutsidePanel.current.show();
@@ -105,9 +109,18 @@ export default function() {
 
   function renderExpandablePanel() {
     return (
-      <DraggablePanel ref={expandablePanel} expandable>
+      <DraggablePanel ref={expandablePanel} hideable>
         <Content title={'Expandable Panel'} />
         <Content title={'Expandable Panel'} />
+      </DraggablePanel>
+    );
+  }
+
+  function renderHideablePanel() {
+    return (
+      <DraggablePanel ref={hideablePanel} hideable={false}>
+        <Content title={'Hideable Panel'} />
+        <Content title={'Hideable Panel'} />
       </DraggablePanel>
     );
   }
@@ -176,6 +189,7 @@ export default function() {
       {renderRefPanel()}
       {renderAnimationPanel()}
       {renderExpandablePanel()}
+      {renderHideablePanel()}
       {renderHideOnPressOutsidePanel()}
       {renderOverlayBackgroundColorPanel()}
       {renderOverlayOpacityPanel()}
