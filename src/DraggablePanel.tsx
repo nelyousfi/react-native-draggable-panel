@@ -26,6 +26,7 @@ type Props = {
   visible?: boolean;
   animationDuration?: number;
   expandable?: boolean;
+  hideable?: boolean;
   hideOnPressOutside?: boolean;
   overlayBackgroundColor?: string;
   overlayOpacity?: number;
@@ -50,20 +51,26 @@ export const DraggablePanel = React.forwardRef<
       borderRadius = 0,
       initialHeight = DEFAULT_PANEL_HEIGHT / 2,
       hideOnBackButtonPressed = true,
+      hideable = true,
       onDismiss,
       children,
     }: Props,
     ref: React.Ref<ReactNativeDraggablePanelRef>,
   ) => {
     const [animatedValue] = React.useState(new Animated.Value(0));
+
     const [popupVisible, togglePopupVisibility] = React.useState(false);
+
     const [animating, setAnimating] = React.useState(false);
+
     const [height] = React.useState(
       Math.min(initialHeight, DEFAULT_PANEL_HEIGHT),
     );
+
     const [innerContentHeight, setInnerContentHeight] = React.useState(
       Math.min(initialHeight, DEFAULT_PANEL_HEIGHT),
     );
+
     const scrollViewRef: RefObject<ScrollView> = React.useRef(null);
 
     React.useEffect(() => {
@@ -123,7 +130,8 @@ export const DraggablePanel = React.forwardRef<
         Platform.OS === 'android' &&
         hideOnBackButtonPressed &&
         !animating &&
-        popupVisible
+        popupVisible &&
+        hideable
       ) {
         hide();
       }
@@ -213,7 +221,7 @@ export const DraggablePanel = React.forwardRef<
               SCREEN_HEIGHT,
             ]}>
             <TouchableWithoutFeedback
-              disabled={!hideOnPressOutside || animating}
+              disabled={!hideOnPressOutside || animating || !hideable}
               onPress={hide}>
               <View style={styles.hideContainer} />
             </TouchableWithoutFeedback>
